@@ -6,6 +6,59 @@ output: html_document
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(echo = TRUE,
+                      message = FALSE,
+                      warning = FALSE)
 ```
 
+# Importing the relevant libraries and dataset 🛠️
+
+First, we import the required libraries which we will use to perform the current analysis.
+
+```{r}
+library(tidyverse)
+library(naniar)
+library(bookdown)
+library(stringr)
+library(stringi)
+library(lubridate)
+library(DT)
+library(forcats)
+library(ggthemes)
+library(corrplot)
+library(mltools)
+library(data.table)
+library(visdat)
+library(janitor)
+library(cowplot)
+library(caTools)
+library(pscl)
+library(ROCR)
+library(caret)
+library(xgboost)
+library(randomForest)
+library(lightgbm)
+library(Matrix)
+library(catboost)
+library(magrittr)
+library(fmsb)
+```
+
+# Introduction
+
+![](https://av-eks-blogoptimized.s3.amazonaws.com/1*yb6F1imitlIc8MSWt9V5vw86404.png)
+<div class="warning" style='background-color:#E9D8FD; color: #69337A; border-left: solid #805AD5 4px; border-radius: 4px; padding:0.7em;'>
+<span>
+<p style='margin-top:1em; text-align:center'>
+<b>What are we trying to study ?</b></p>
+<p style='margin-left:1em;'>
+
+
+Time series forecasting is a powerful analytical technique used to predict future values based on historical data. It plays a crucial role in various domains such as finance, economics, weather forecasting, supply chain management, and more. By analyzing patterns, trends, and dependencies within a time series dataset, forecasting models aim to provide accurate predictions and insights into future behavior.
+
+The first step in time series forecasting is to understand the characteristics of the data. Time series data consists of a sequence of observations collected over time, where each observation is associated with a specific timestamp. These observations may exhibit trends, seasonality, cyclic patterns, or irregularities, which need to be identified and accounted for in the forecasting process.
+
+</p>
+<p style='margin-bottom:1em; margin-right:1em; text-align:right; font-family:Georgia'> <b> - The internet </b> <i></i>
+</p></span>
+</div>
