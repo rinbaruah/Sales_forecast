@@ -1,8 +1,13 @@
 ---
-title: "Sales Forecasting"
+title: "📈📊 Sales Forecasting"
 author: "Arindam Baruah"
 date: "2023-07-11"
-output: html_document
+output:
+  bookdown::html_document2:
+    toc: false
+    toc_float: false
+    theme: readable
+
 ---
 
 ```{r setup, include=FALSE}
@@ -46,7 +51,7 @@ library(fmsb)
 
 # Introduction
 
-![](https://av-eks-blogoptimized.s3.amazonaws.com/1*yb6F1imitlIc8MSWt9V5vw86404.png)
+![](https://editor.analyticsvidhya.com/uploads/3951420200902_blog_-forecasting-with-time-series-models-using-python_pt2_website.png)
 <div class="warning" style='background-color:#E9D8FD; color: #69337A; border-left: solid #805AD5 4px; border-radius: 4px; padding:0.7em;'>
 <span>
 <p style='margin-top:1em; text-align:center'>
@@ -54,7 +59,7 @@ library(fmsb)
 <p style='margin-left:1em;'>
 
 
-Time series forecasting is a powerful analytical technique used to predict future values based on historical data. It plays a crucial role in various domains such as finance, economics, weather forecasting, supply chain management, and more. By analyzing patterns, trends, and dependencies within a time series dataset, forecasting models aim to provide accurate predictions and insights into future behavior.
+<b>Time series forecasting</b> is a powerful analytical technique used to predict future values based on historical data. It plays a crucial role in various domains such as finance, economics, weather forecasting, supply chain management, and more. By analyzing patterns, trends, and dependencies within a time series dataset, forecasting models aim to provide accurate predictions and insights into future behavior.
 
 The first step in time series forecasting is to understand the characteristics of the data. Time series data consists of a sequence of observations collected over time, where each observation is associated with a specific timestamp. These observations may exhibit trends, seasonality, cyclic patterns, or irregularities, which need to be identified and accounted for in the forecasting process.
 
@@ -62,3 +67,73 @@ The first step in time series forecasting is to understand the characteristics o
 <p style='margin-bottom:1em; margin-right:1em; text-align:right; font-family:Georgia'> <b> - The internet </b> <i></i>
 </p></span>
 </div>
+
+
+Great ! We have all the libraries loaded. Next, we are gonna load the required dataset for conducting the enzyme classification analysis. 
+
+We will use one dataset for the purpose of exploratory data analysis and training the prediction model while the test dataset for testing the prediction model on a completely new dataset.
+
+
+After reading the data, let us see how the train dataset looks like.
+
+```{r read-data,include=TRUE}
+df_train <- read_csv("data/train.csv")
+df_test <-  read_csv("data/test.csv")
+head(df_train)
+```
+
+
+We observe that the dataset is fairly simple with the following features.
+
+1. __Date__: The date of purchase associated for a particular product.
+2. __Country__: The originating country where the purchase was made.
+3. __Store__: The store associated with the purchase product.
+4. __Product__: The type of product purchased.
+5. __num_sold__: Number of products sold.
+
+# Data cleaning
+
+## Removal of unnecessary variables
+
+The dataset appears to be fairly simple and concise. We will retain all the available features in this dataset except for the "id" column.
+
+```{r echo=TRUE}
+df_train <- df_train %>% select(-id)
+```
+
+## Check for null values
+
+In this step, we will try to check for the presence of null values in the dataset.
+
+
+```{r missvis,fig.cap="Missingness in the dataset",fig.align='center'}
+gg_miss_var(df_train)
+```
+
+Based on the figure \@ref(fig:missvis), we can observe that
+
+<div class="alert alert-block alert-success">
+✅  The dataset does not contain any missing values. This indicates that we have a clean dataset which is ready for EDA and further analysis.
+</div>
+
+# Exploratory Data Analysis
+
+In this section, we will try to visualise the various features and try to obtain key insights through the usage of these visualisations.
+
+## Sales in each country
+
+Let us try to observe the number of product sales for each country.
+
+```{r country-sales,fig.cap="Country wise distribution of sales",fig.align='center'}
+
+df_sales_count <- df_train %>% group_by(country) %>% summarise(count = n())
+pl1 <- ggplot(data = df_sales_count,aes(x = country,y = count,fill = country)) + geom_col(color = 'black') + theme_classic() + geom_label(aes(label = count)) + labs(x = "Country",y = "Number of products sold") + ggtitle("Country wise distribution of sales") + theme(legend.position = 'none',plot.title = element_text(hjust = 0.5))
+pl1
+
+```
+Based on figure \@ref(fig:country-sales), we can observe that,
+
+<div class="alert alert-block alert-warning">
+💡 the dataset contains equally distributed number of sales for each country. <b>This is ideal</b> to create our prediction model as the model can be trained better without the presence of any bias originating through hetergenous data. 💡
+</div>
+
