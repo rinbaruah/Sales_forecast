@@ -49,6 +49,7 @@ library(magrittr)
 library(fmsb)
 library(plotly)
 library(TTR)
+library(broom)
 ```
 
 # Introduction
@@ -244,7 +245,58 @@ Upon analysing figure \@ref(fig:totstorecount), we can observe that
 </div>
 
 
+# Data Wrangling
+
+## Feature Engineering
+
+After analysing the data through our visualisations in the previous sections, we can start preparing the dataset for the ML algorithms. This would require us to tweak the data into a tidy format by transforming the same.
+
+This involves converting categorical data such as Country, Store and Products into encoded data. 
+
+```{r}
+df_train$country <- factor(df_train$country)
+df_train$store <- factor(df_train$store)
+df_train$product <- factor(df_train$product)
+dt_train <- data.table(df_train)
+dt_train <- one_hot(dt_train,cols = c("country","store","product"))
+
+df_train <- as.data.frame(dt_train)
+```
+
+<div class="alert alert-block alert-success">
+✅  All right ! We have finally prepaared our dataset. In the next step, we will now separate the target label from the input dataframe for the purpose of training and testing our prediction model.
+</div>
+
+## Train and test dataset preparation
+
+The datasets for training and testing will now be prepared.
+
+```{r train-test, echo=TRUE}
+set.seed(101)
+sample=sample.split(df_train$num_sold,SplitRatio=0.7)
+train=subset(df_train,sample==T)
+test=subset(df_train,sample==F)
+
+```
+
+# Predictive modeling
+
+## Linear Regression
+
+Let us utilise the linear regression technique to predict the number of sold products.
+
+```{r logit, echo=TRUE,include=TRUE}
+model_lr <- lm(num_sold~.,data=train)
+
+fitted.results <- predict(model_lr,newdata=subset(test,select=-(num_sold)))
+
+glance(model_lr)
+```
 
 
+As we can observe, 
 
+<div class="alert alert-block alert-warning">
+💡 The linear regression model fared moderately while predicting the total number of sales with the model having an R-squared score of 75%. 💡
+</div>
 
