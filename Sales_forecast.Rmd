@@ -48,6 +48,7 @@ library(catboost)
 library(magrittr)
 library(fmsb)
 library(plotly)
+library(TTR)
 ```
 
 # Introduction
@@ -138,7 +139,7 @@ Based on figure \@ref(fig:country-sales), we can observe that,
 💡 the dataset contains equally distributed number of sales for each country. <b>This is ideal</b> to create our prediction model as the model can be trained better without the presence of any bias originating through hetergenous data. 💡
 </div>
 
-## Global sales
+## Global sales {#label1}
 
 ```{r totsale,fig.cap="Total courses sold",fig.align='center'}
 df_date_sale <- df_train %>% group_by(date) %>% summarise(tot_sold =  sum(num_sold))
@@ -158,6 +159,18 @@ pl2 <- ggplot(data = df_date_sale,aes(x = date,y = tot_sold),group = date) + geo
 pl2
 ```
 
+## Trend line of total global sales
+
+While we have observed the total global sales in section \@ref(label1), let us observe the overall trend line using a simple moving average function.
+
+```{r}
+df_date_sale_sma <- df_date_sale %>% SMA(n=7)
+
+plot.ts(df_date_sale_sma)
+title("Trend line of global sales \n with 1 week moving average")
+
+```
+
 
 
 Based on figure \@ref(fig:totsale), we can observe that
@@ -173,12 +186,12 @@ Based on figure \@ref(fig:totsale), we can observe that
 df_date_sale_country <- df_train %>% group_by(date,country) %>% summarise(tot_sold =  sum(num_sold))
 
 
-pl3 <-ggplot(data = df_date_sale_country,
+pl4 <-ggplot(data = df_date_sale_country,
          aes(x = date, y = tot_sold, color = country),
          group = date) + geom_line() + theme_classic() + ggtitle("Total sales in all countries") + labs(y = "Total sales", x = "Date of purchase", color =
                                                                                                           "Country") + theme(plot.title = element_text(hjust = 0.5))
 
-pl3
+pl4
 ```
 
 Based on figure \@ref(fig:totsalecount), we can observe that
@@ -194,12 +207,12 @@ Let us observe the product wise sales in the following visualisation.
 ```{r totprodcount,fig.cap="Product wise sales globally",fig.align='center'}
 df_prod_sale <- df_train %>% group_by(date,product) %>% summarise(tot_sold =  sum(num_sold))
 
-pl4 <-ggplot(data = df_prod_sale,
+pl5 <-ggplot(data = df_prod_sale,
          aes(x = date, y = tot_sold, color = product),
          group = date) + geom_line(alpha = 0.7) + theme_classic() + ggtitle("Total sales of products in all countries") + labs(y = "Total sales", x = "Date of purchase", color =
-                                                                                                          "Product") + theme(plot.title = element_text(hjust = 0.5),legend.text = element_text(size=6))
+                                                                                                          "Product") + theme(legend.position = 'none')
 
-pl4
+ggplotly(pl5)
 ```
 
 Based on figure \@ref(fig:totprodcount), we can observe that
@@ -208,3 +221,30 @@ Based on figure \@ref(fig:totprodcount), we can observe that
 <div class="alert alert-block alert-warning">
 💡 there is a <b> sinusoidal </b> seasonality in the sales of most Kaggle products. However, the product "Using LLMs to Win Friends and Influence People" does not show much seasonality and have much lower sales compared to the rest of the products. 💡
 </div>
+
+## Store wise sales
+
+After observing the sales in terms of products and location, let us check how do the sales fare for each store of Kaggle.
+
+```{r totstorecount,fig.cap="Total sales of each store",fig.align='center'}
+df_store_sale <- df_train %>% group_by(date,store) %>% summarise(tot_sold =  sum(num_sold))
+
+pl6 <-ggplot(data = df_store_sale,
+         aes(x = date, y = tot_sold, color = store),
+         group = date) + geom_line(alpha = 0.7) + theme_classic() + ggtitle("Total sales of each store") + labs(y = "Total sales", x = "Date of purchase", color =
+                                                                                                          "Store") + theme(plot.title = element_text(hjust = 0.5))
+
+ggplotly(pl6)
+```
+Upon analysing figure \@ref(fig:totstorecount), we can observe that
+
+
+<div class="alert alert-block alert-warning">
+💡 the seasonal peaks in the sales for each of the Kaggle store are in close synchonisation to each other. However, there is a distinct difference in the volume of sales for each store. It can be observed that the sales for "Kagglazon" are signficantly higher than the "Kaggle Store" and the "Kaggle Learn" stores. 💡
+</div>
+
+
+
+
+
+
