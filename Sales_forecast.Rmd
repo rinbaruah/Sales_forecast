@@ -144,7 +144,7 @@ Based on figure \@ref(fig:country-sales), we can observe that,
 df_date_sale <- df_train %>% group_by(date) %>% summarise(tot_sold =  sum(num_sold))
 
 
-pl2 <- ggplot(data = df_date_sale,aes(x = date,y = tot_sold),group = date) + geom_line(color = 'blue') + theme_classic() + ggtitle("Total sales in all countries") + labs(y = "Total sales",x = "Date of purchase") + theme(plot.title = element_text(hjust = 0.5)) +
+pl2 <- ggplot(data = df_date_sale,aes(x = date,y = tot_sold),group = date) + geom_line(color = 'blue') + theme_classic() + ggtitle("Total sales globally") + labs(y = "Total sales",x = "Date of purchase") + theme(plot.title = element_text(hjust = 0.5)) +
     annotate("segment",x = ymd(20200101),
     y = 5500,xend = ymd(20200401) ,
     yend = 8000 ,arrow = arrow(type = "closed", 
@@ -166,3 +166,21 @@ Based on figure \@ref(fig:totsale), we can observe that
 <div class="alert alert-block alert-warning">
 💡 there is a <b> strong seasonality </b> observed in the data. The sales are observed to peak during the period of new year everytime. However, an unexpected drop in sales were observed in the year of 2020. The sales could be affected as a result of COVID-19 restrictions. 💡
 </div>
+
+
+```{r totsalecount,fig.cap="Total courses sold in each country",fig.align='center'}
+df_date_sale_country <- df_train %>% group_by(date,country) %>% summarise(tot_sold =  sum(num_sold))
+
+
+pl3 <- ggplot(data = df_date_sale_country,aes(x = date,y = tot_sold,color=country),group = date) + geom_line() + theme_classic() + ggtitle("Total sales in all countries") + labs(y = "Total sales",x = "Date of purchase",color="Country") + theme(plot.title = element_text(hjust = 0.5)) 
+
+pl3
+```
+
+Based on figure \@ref(fig:totsalecount), we can observe that
+
+<div class="alert alert-block alert-warning">
+💡 the <b> strong seasonality </b> is observed equally in each of the 5 countries. The peaks and troughs are observed to appear around the same time of the year for all the countries. The sales were observed to be the highest for Canada, followed by Japan,Spain, Estonia and Argentina. The sales were underwhelmingly low in the country of Argentina. 💡
+</div>
+
+
