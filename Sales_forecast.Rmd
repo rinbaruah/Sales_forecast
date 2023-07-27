@@ -287,9 +287,6 @@ Let us utilise the linear regression technique to predict the number of sold pro
 
 ```{r logit, echo=TRUE,include=TRUE}
 model_lr <- lm(num_sold~.,data=train)
-
-fitted.results <- predict(model_lr,newdata=subset(test,select=-(num_sold)))
-
 glance(model_lr)
 ```
 
@@ -300,3 +297,24 @@ As we can observe,
 💡 The linear regression model fared moderately while predicting the total number of sales with the model having an R-squared score of 75%. 💡
 </div>
 
+```{r}
+model_aug <- augment(model_lr)
+fitted.results <- predict(model_lr,newdata=subset(test,select=-(num_sold)))
+```
+
+After fitting the linear regression model on the train dataset and predicting the values with the test dataset, let us see how do the fitted and actual values vary.
+
+```{r linreg,fig.cap="Predicted and actual values in Linear Regression model",fig.align='center'}
+df_lr <- as.data.frame(test$num_sold)
+df_lr <- df_lr %>% rename("Actual_values" = "test$num_sold")
+df_lr$fitted <- fitted.results
+
+pl7 <- ggplot(data = df_lr,aes(x = Actual_values,y = fitted)) + geom_point() + geom_smooth(method = 'lm',aes(color = "Linear regression prediction")) + theme_classic() + labs(x="Actual values",y = "Predicted values",color = "Model") + ggtitle("Predicted and actual values \n in Linear Regression model") + theme(plot.title = element_text(hjust=0.5))
+pl7
+
+```
+
+Based on figure \@ref(fig:linreg),
+<div class="alert alert-block alert-warning">
+💡 we can observe that the linear regression <b> does not do a great job at predicting the number of sales. </b> This could be as a result of the fact that the linear regression model is sensitive to outliers. Another reason can be due to the fact that not all phenomena and circumstances can be accurately described by a linear regression model. The current problem statement maybe poorly described by a linear model.  💡
+</div>
